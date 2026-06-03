@@ -1,0 +1,105 @@
+﻿@model IEnumerable<NewsPOrtal.DAL.Models.Category>
+
+@{
+    ViewBag.Title = "Categories";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="box-title">
+            <b>Categories</b>
+        </h3>
+    </div>
+    <!-- /.box-header -->
+    <div class="panel-body">
+        @if (ViewContext.HttpContext.User.IsInRole("SuperAdmin"))
+        {
+        <p>
+            @Html.ActionLink("New Category", "Create", "Categories", null, new { @class = "btn btn-primary" })
+        </p>
+        }
+        <table class="table table-hover table-bordered table-condensed" id="Categories">
+            <thead>
+                <tr>
+                    <td><b>Category</b></td>
+                    <td><b>Created By</b></td>
+                    <td><b>Created On</b></td>
+                    @if (ViewContext.HttpContext.User.IsInRole("SuperAdmin"))
+                    {
+                    <td style="width:20px"><b>Action</b></td>
+                    }
+                </tr>
+            </thead>
+            @foreach (var user in Model)
+            {
+                if (user.IsDeleted == false)
+                {
+                    <tr>
+                        <td>@Html.ActionLink(@user.Code, "Code", "Categories", new { id = user.Id }, null)</td>
+                        <td>@user.CreatedBy</td>
+                        <td>@Convert.ToDateTime(user.CreatedOn).ToString("dd MMMM yyyy hh:mm")</td>
+                        @if (ViewContext.HttpContext.User.IsInRole("SuperAdmin"))
+                        {
+                        <td>@Html.ActionLink("Delete", "SoftDelete", "Categories", new { id = user.Id }, new { @class = "delete btn btn-danger", data_toggle = "modal", data_target = "#exampleModal" })</td>
+                        }
+                    </tr>
+                }
+
+            }
+        </table>
+    </div>
+</div>
+
+@foreach (var user in Model)
+{
+    using (Html.BeginForm("SoftDelete", "Categories", new { id = user.Id} ))
+    {
+        @Html.AntiForgeryToken()
+        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        
+                    </div>
+
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <input type="submit" value="Delete" class="btn btn-danger" />
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+@section scripts{
+    <script>
+
+        $(function () {
+            $('#Categories').DataTable({
+                "paging": true,
+                "lengthChange": true,
+                "searching": true,
+                "ordering": true,
+                "info": true,
+                "autoWidth": true
+            });
+        });
+
+
+
+        $('#exampleModal').on('shown.bs.modal', function () {
+            $('#myInput').trigger('focus')
+        })
+
+    </script>
+}
+

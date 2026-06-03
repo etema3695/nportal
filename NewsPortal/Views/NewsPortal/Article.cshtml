@@ -1,0 +1,89 @@
+﻿@model NewsPOrtal.DAL.ViewModels.CategoryViewModel
+
+@{
+    ViewBag.Title = "Article";
+    Layout = "~/Views/Shared/MyLayout.cshtml";
+}
+
+
+<!-- s-content
+   ================================================== -->
+<section class="s-content s-content--narrow s-content--no-padding-bottom">
+    @foreach (var article in Model.Articles)
+    {
+        <article class="row format-standard">
+
+            <div class="s-content__header col-full">
+                <h1 class="s-content__header-title">
+                    @article.Title
+                </h1>
+                <ul class="s-content__header-meta">
+                    
+                    <li class="date">@Convert.ToDateTime(article.CreatedOn).ToString("dd MMMM  , yyyy")</li>
+                    <li class="cat">
+                        In
+                        <a href="/NewsPortal/Category/@article.Category_Id">@article.Category.Code</a>
+                    </li>
+                </ul>
+            </div> <!-- end s-content__header -->
+
+            <div class="s-content__media col-full">
+                <div class="s-content__post-thumb">
+
+                    <img src=@Url.Content(article.ImagePath)>
+
+                </div>
+            </div> <!-- end s-content__media -->
+
+            <div class="col-full s-content__main">
+
+                <p class="lead">@article.Description</p>
+
+                <p>
+                    @Html.Raw(@article.Body)
+                </p>
+
+
+            </div> <!-- end s-content__main -->
+
+        </article>
+    }
+</section>
+
+
+
+<section class="container comments-section">
+    <div class="row">
+        @foreach (var com in Model.Comments)
+        {
+        <div class="comment">
+            <div class="col-md-1 comment-avatar">
+                <img class="avatar" src="~/Content/images/avatars/images.png" alt="">
+            </div>
+            <div class="col-md-11 comment-body">
+                <h4>@com.Name</h4>
+                <p>@com.Body</p>
+            </div>
+           @if (User.IsInRole("SuperAdmin")) {
+
+            @Html.ActionLink("Delete", "DeleteComment", "NewsPortal", new { id = com.Id }, new { @class = "delete btn btn-danger" })
+           }
+        </div>
+        }
+    </div>
+</section>
+
+<section class="container add-comment-section">
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+        <partial name="_CommentPartial" />
+    }
+
+</section>
+
+    
+
+
+  
+
+

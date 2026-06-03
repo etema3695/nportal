@@ -1,0 +1,125 @@
+﻿@model IEnumerable<NewsPOrtal.DAL.Models.Article>
+
+@{
+    ViewBag.Title = "Articles";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="box-title">
+            <b>Articles</b>
+        </h3>
+    </div>
+    <!-- /.box-header -->
+    <div class="panel-body">
+        <p>
+            @Html.ActionLink("New Article", "Create", "Articles", null, new { @class = "btn btn-primary" })
+        </p>
+        <table class="table table-hover table-bordered table-condensed" id="Articles">
+            <thead>
+                <tr>
+                    <td><b>Category</b></td>
+                    <td><b>Title</b></td>
+                    <td><b>Description</b></td>
+                    <td><b>Created By</b></td>
+                    <td><b>Created On</b></td>
+                    <td style="width:204px"><b>Action</b></td>
+                </tr>
+            </thead>
+            @foreach (var user in Model)
+            {
+
+
+                <tr>
+                    <td>@user.Category.Code</td>
+                    <td>@user.Title</td>
+                    <td>@user.Description</td>
+                    <td>@user.CreatedBy</td>
+                    <td>@Convert.ToDateTime(user.CreatedOn).ToString("dd MMMM yyyy hh:mm")</td>
+                    <td><div class="btn-group"> 
+                        @Html.ActionLink("View", "Details", "Articles", new { id = user.Id }, new { @class = "btn btn-primary" })  
+                        @if (ViewContext.HttpContext.User.IsInRole("SuperAdmin"))
+                        {
+                            @Html.ActionLink("Delete", "Delete", "Articles", new { id = user.Id }, new { @class = "btn btn-danger", data_toggle = "modal", data_target = "#articlesModal" })
+                        }
+                        @if (user.IsPublished == false)
+                        {
+                            if (ViewContext.HttpContext.User.IsInRole("SuperAdmin"))
+                            {
+                            @Html.ActionLink("Publish", "Publish", "Articles", new { id = user.Id }, new { @class = "btn btn-primary" })
+                            }
+                            else if (user.CreatedBy==User.Identity.Name)
+                            {
+                                @Html.ActionLink("Delete", "Delete", "Articles", new { id = user.Id }, new { @class = "btn btn-danger", data_toggle = "modal", data_target = "#articlesModal" })
+                                @Html.ActionLink("Edit", "Edit","Articles", new { id = user.Id }, new { @class = "btn btn-primary" })
+                            }
+                        }
+                        else if (user.IsPublished == true)
+                        {
+                            if (ViewContext.HttpContext.User.IsInRole("SuperAdmin"))
+                            {
+                                @Html.ActionLink("Edit", "Edit","Articles", new { id = user.Id }, new { @class = "btn btn-primary" })
+                            }
+                        }
+                        </div>
+                    </td>
+                </tr>
+
+
+            }
+
+        </table>
+    </div>
+
+</div>
+
+
+        
+        <div class="modal fade" id="articlesModal" tabindex="-1" role="dialog" aria-labelledby="articlesModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <h4 style="color:#d9534f"></h4>
+                    </div>
+
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <input type="submit" value="Delete" class="btn btn-danger" />
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+@section scripts{
+    <script>
+
+        $(function () {
+            $('#Articles').dataTable({
+                "paging": true,
+                "lengthChange": true,
+                "searching": true,
+                "ordering": true,
+                "info": true,
+                "autoWidth": true
+            });
+        });
+
+        $('#articlesModal').on('shown.bs.modal', function () {
+            $('#articlesModal').trigger('focus')
+        })
+
+        $(document.body).on('hidden.bs.modal', function () {
+            $('#articlesModal').removeData('bs.modal')
+        });
+    </script>
+}
+

@@ -1,0 +1,190 @@
+﻿@model NewsPOrtal.DAL.ViewModels.BaseViewModel
+<!DOCTYPE html>
+<html>
+<head>
+
+    @RenderSection("head", required: false)
+    <!--- basic page needs
+    ================================================== -->
+    <meta charset="utf-8">
+    <title>NewsPortal</title>
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- mobile specific metas
+    ================================================== -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <!-- CSS
+    ================================================== -->
+    <link rel="stylesheet" href="~/Content/css/base.css">
+    <link rel="stylesheet" href="~/Content/css/vendor.css">
+    <link rel="stylesheet" href="~/Content/css/main.css">
+
+    <!-- script
+    ================================================== -->
+    <script src="~/Content/js/modernizr.js"></script>
+    <script src="~/Content/js/pace.min.js"></script>
+
+    <!-- favicons
+    ================================================== -->
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+</head>
+<body>
+
+
+    <section class="s-pageheader" style="height:30px;">
+
+        <header class="header">
+            <div class="header__content row">
+
+                <div class="header__social">
+                    <a href="/NewsPortal/">
+                        <img src="~/Content/images/logo1.png" style="width:80%" />
+                    </a>
+                </div>
+
+
+                <a class="header__toggle-menu" href="#0" title="Menu"><span>Menu</span></a>
+
+                <nav class="header__nav-wrap">
+
+                    <h2 class="header__nav-heading h6">Site Navigation</h2>
+
+                    <ul class="header__nav">
+                        <li class="current"><a href="~/NewsPortal/" title="">Home</a></li>
+
+
+                        @foreach (var cat in Model.Categories)
+                        {
+                            if (cat.Parent_Id == null)
+                            {
+                                <li class="">
+
+                                    <a href="/NewsPortal/Category/@cat.Id">@cat.Code</a>
+
+
+                                    <ul class="sub-menu">
+                                        @foreach (var sub in Model.Categories)
+                                        {
+
+                                            if (sub.Parent_Id == cat.Id.ToString())
+                                            {
+
+                                                <li> @Html.ActionLink(sub.Code, "Category", "NewsPortal", new { id = sub.Id }, null)</li>
+                                            }
+                                        }
+                                    </ul>
+
+
+
+                                </li>
+                            }
+
+
+                        }
+
+
+                        <li><a href="/NewsPortal/About" title="">About</a></li>
+                        <li><a href="/NewsPortal/Contact" title="">Contact</a></li>
+
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            <form asp-controller="Account" asp-action="LogOff" method="post" id="logoutForm">
+                                @Html.AntiForgeryToken()
+                                <a href="javascript:document.getElementById('logoutForm').submit()" style="float: right; margin-top:-31px;padding-right:70px ">Log Off</a>
+                            </form>
+                            <a href="/Manage" title="Manage" style=" float: right; margin-top:-61px ">Manage</a>
+                        }
+                        else
+                        {
+                            <a href="/Account/Login" id="loginLink" style="padding-left:10px; float: right; margin-top:7px ">Log in</a>
+
+                            <a href="/Account/Register" id="registerLink" style=" float: right; margin-top:7px ">Register</a>
+
+
+
+
+
+                        }
+
+                    </ul> <!-- end header__nav -->
+
+                    <a href="#0" title="Close Menu" class="header__overlay-close close-mobile-menu">Close</a>
+
+                </nav> <!-- end header__nav-wrap -->
+
+
+            </div> <!-- header-content -->
+        </header> <!-- header -->
+
+    </section>
+
+    @RenderBody()
+
+    <!-- s-footer
+    ================================================== -->
+    <footer class="s-footer">
+
+        <div class="s-footer__main">
+            <div class="row">
+
+                <div class="col-two md-four mob-full s-footer__sitelinks">
+
+                    <h4>Quick Links</h4>
+
+                    <ul class="s-footer__linklist">
+                        <li><a href="/NewsPortal">Home</a></li>
+                        <li><a href="/NewsPortal/About">About</a></li>
+                        <li><a href="/NewsPortal/Contact">Contact</a></li>
+                    </ul>
+
+                </div> <!-- end s-footer__sitelinks -->
+
+                <div class="col-two md-four mob-full s-footer__social">
+
+
+
+                </div> <!-- end s-footer__social -->
+
+
+
+            </div>
+        </div> <!-- end s-footer__main -->
+
+        <div class="s-footer__bottom">
+            <div class="row">
+                <div class="col-full">
+                    <div class="s-footer__copyright">
+                        <span>© Copyright E.T </span>
+                    </div>
+                </div>
+            </div>
+        </div> <!-- end s-footer__bottom -->
+
+    </footer> <!-- end s-footer -->
+    <!-- preloader
+    ================================================== -->
+    <div id="preloader">
+        <div id="loader">
+            <div class="line-scale">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Java Script
+    ================================================== -->
+    <script src="~/Content/js/jquery-3.2.1.min.js"></script>
+    <script src="~/Content/js/plugins.js"></script>
+    <script src="~/Content/js/main.js"></script>
+    <script src="~/Content/js/custom.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,38 @@
+# GitHub Linguist overrides
+# Goal: C# should appear as the dominant language.
+
+# ── Vendor / legacy NuGet packages folder ─────────────────────────────────────
+packages/**             linguist-vendor
+
+# ── All JavaScript files (vendor / generated assets) ─────────────────────────
+*.js                    linguist-vendored
+*.js                    linguist-detectable=false
+
+# ── All CSS / SCSS files ──────────────────────────────────────────────────────
+*.css                   linguist-vendored
+*.css                   linguist-detectable=false
+*.scss                  linguist-vendored
+*.scss                  linguist-detectable=false
+
+# ── Standalone HTML files (not Razor) ────────────────────────────────────────
+*.html                  linguist-vendored
+*.html                  linguist-detectable=false
+
+# ── PHP stubs ─────────────────────────────────────────────────────────────────
+*.php                   linguist-vendored
+*.php                   linguist-detectable=false
+
+# ── Static asset folders inside the web project ───────────────────────────────
+NewsPortal/Scripts/**   linguist-vendor
+NewsPortal/Content/**   linguist-vendor
+NewsPortal/fonts/**     linguist-vendor
+NewsPortal/Images/**    linguist-vendor
+NewsPortal/wwwroot/**   linguist-vendor
+
+# ── Razor views — explicitly detectable so Linguist counts them ──────────────
+*.cshtml                linguist-detectable=true
+
+# ── Upgrade / snapshot artefacts ──────────────────────────────────────────────
+upgrades/**             linguist-generated
+CopilotSnapshots/**     linguist-generated
+workflows/**            linguist-generated

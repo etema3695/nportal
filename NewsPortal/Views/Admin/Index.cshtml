@@ -1,0 +1,59 @@
+﻿@model IEnumerable<NewsPortal.ViewModel.UserInRoleViewModel>
+@{
+    ViewBag.Title = "Index";
+}
+
+@{
+    ViewBag.Title = "Users With Roles";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="box-title">
+            <b>Users with Roles</b>
+        </h3>
+    </div>
+    <!-- /.box-header -->
+    <div class="panel-body">
+        <p>
+            @Html.ActionLink("New User", "CreateUser", "Admin", null, new { @class = "btn btn-primary" })
+        </p>
+        <table class="table table-hover table-bordered table-condensed" id="UsersWithRoles">
+            <thead>
+                <tr>
+                    <td><b>Username</b></td>
+                    <td><b>Roles</b></td>
+                    <td style="width:20px;"><b>Action</b></td>
+                </tr>
+            </thead>
+            @foreach (var user in Model)
+            {
+                <tr>
+                    <td>@user.Username</td>
+                    <td>@user.Role</td>
+                    <td>@Html.ActionLink("Change Password","ChangePasswordForUser","Manage",new {id=user.UserId },new {@class="btn btn-primary" })</td>
+                </tr>
+            }
+        </table>
+    </div>
+    
+</div>
+
+
+@section scripts{
+    <script>
+
+        $(function () {
+            $('#UsersWithRoles').DataTable({
+                "paging": true,
+                "lengthChange": true,
+                "searching": true,
+                "ordering": true,
+                "info": true,
+                "autoWidth": true
+            });
+        });
+    </script>
+}
+

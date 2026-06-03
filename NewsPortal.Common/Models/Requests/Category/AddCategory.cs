@@ -1,0 +1,16 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace NewsPortal.Common.Models.Requests.Category
+{
+    public class AddCategory
+    {
+        public string Name { get; set; }
+        public DateTime CreatedOn { get; set; }
+        public string ParentId { get; set; }
+        public string CreatedBy { get; set; }
+    }
+}

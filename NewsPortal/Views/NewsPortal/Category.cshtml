@@ -1,0 +1,117 @@
+﻿@model NewsPOrtal.DAL.ViewModels.CategoryViewModel
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/MyLayout.cshtml";
+}
+
+
+<!-- end s-pageheader -->
+<!-- s-content
+================================================== -->
+<section class="s-content">
+
+    <div class="row masonry-wrap">
+        <div class="masonry">
+
+            <div class="grid-sizer"></div>
+            @foreach (var article in Model.Articles)
+            {
+                <article class="masonry__brick entry format-standard" data-aos="fade-up">
+
+                    <div class="entry__thumb">
+                        <a href="/NewsPortal/Article/@article.Id" class="entry__thumb-link">
+                            <img src=@Url.Content(article.ImagePath)>
+                        </a>
+                    </div>
+                    <div class="entry__text">
+                        <div class="entry__header">
+
+                            <div class="entry__date">
+                                <a>@Convert.ToDateTime(article.CreatedOn).ToString("dd MMMM  , yyyy")</a>
+                            </div>
+                            <h1 class="entry__title">@Html.ActionLink(article.Title, "Article", "Newsportal", new { id = article.Id }, null)</h1>
+
+                        </div>
+                        <div class="entry__excerpt">
+                            <p>
+                                @article.Description
+                            </p>
+                        </div>
+                        <div class="entry__meta" style="width:50%;float:left">
+                            <span class="entry__meta-links">
+                                @Html.ActionLink(article.Category.Code, "Category", "NewsPortal", new { id = article.Category.Id }, null)
+                            </span>
+                        </div>
+                        <div class="entry__meta" style="width:50%;float:right;text-align:end">
+                            <span class="entry__meta-links">
+                                @Html.ActionLink("Read more", "Article", "NewsPortal", new { id = article.Id }, null)
+                            </span>
+                        </div>
+
+                    </div>
+
+                </article> <!-- end article -->
+            }
+
+        </div> <!-- end masonry -->
+    </div> <!-- end masonry-wrap -->
+    <div class="row">
+        <div class="col-full">
+            <nav class="pgn">
+                <ul>
+                    @if (ViewBag.MaxPage != 0)
+                    {
+                        if (ViewBag.Page > 0)
+                        {
+                            <li>
+                                <a href="@Url.Action("Category", new { page = ViewBag.Page - 1 })"
+                                   class="pgn__prev">
+                                    &laquo; Prev
+                                </a>
+                            </li>
+                        }
+                        for (ViewBag.Page = 0; ViewBag.Page <= ViewBag.MaxPage; ViewBag.Page = ViewBag.Page + 1)
+                        {
+                            if (ViewBag.Page == ViewBag.CurrentPage)
+                            {
+                                <li>
+                                    <p class="pgn__num current">
+                                        @(ViewBag.Page + 1)
+                                    </p>
+                                </li>
+
+                            }
+
+
+                            if (ViewBag.CurrentPage < ViewBag.MaxPage)
+                            {
+                                <li>
+                                    <a href="@Url.Action("Category", new { page = ViewBag.CurrentPage + 1 })"
+                                       class="pgn__next">
+                                        Next &raquo;
+                                    </a>
+                                </li>
+
+                            }
+
+                            if (ViewBag.Page == ViewBag.CurrentPage)
+                            {
+                                continue;
+                            }
+                            <li>
+                                <a href="@Url.Action("Category", new { page = ViewBag.Page })"
+                                   class="pgn__num">
+                                    @(ViewBag.Page + 1)
+                                </a>
+                            </li>
+                        }
+
+                    }
+
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+</section> <!-- s-content -->

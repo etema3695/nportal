@@ -1,0 +1,89 @@
+﻿@model NewsPOrtal.DAL.Models.Article
+
+@{
+    ViewBag.Title = "Create Article";
+}
+
+<h2 style="color:#337ab7;text-align:center;padding-bottom: 16px;">Create Article</h2>
+<script src="~/Scripts/ckeditor/ckeditor.js"></script>
+<script src="~/Scripts/ckfinder/ckfinder.js"></script>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    
+<div class="form-horizontal container">
+ <div class="row">
+    
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <div class="form-group col-md-6">
+        @Html.LabelFor(model => model.Title, htmlAttributes: new { @class = "control-label col-md-3" })
+        <div class="col-md-5 " style="margin-left :52px">
+            @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
+            
+        </div>
+    </div>
+
+    <div class="form-group col-md-6">
+
+        
+        @Html.LabelFor(model => model.Category_Id, "Category", htmlAttributes: new { @class = "control-label col-md-3" })
+        <div class="col-md-5">
+            @Html.DropDownList("Category_Id", null, htmlAttributes: new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.Category_Id, "", new { @class = "text-danger" })
+            
+        </div>
+    </div>
+
+    <div class="form-group col-md-12">
+        @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.TextAreaFor(model => model.Description, new { htmlAttributes = new { @class = "form-control3" } })
+            @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group col-md-12">
+        @Html.LabelFor(model => model.Body, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class=" col-md-10">
+            @Html.TextAreaFor(model =>model.Body)
+            @Html.ValidationMessageFor(model => model.Body, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(model => model.ImagePath, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            <input type="file" name="ImageTitle" accept="image/*" onchange="loadFile(event)">
+            <img id="output" required />
+            @Html.ValidationMessageFor(model => model.ImageTitle, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+ </div>
+
+</div>
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="Create" class="btn btn-primary" />
+        </div>
+    </div>
+
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+<script>
+    CKEDITOR.replace('Body');
+    var loadFile = function (event)
+    {
+            var output = document.getElementById('output');
+            output.src = URL.createObjectURL(event.target.files[0]);
+            output.width = 400;
+            output.height = 200;
+    };
+
+</script>
+
