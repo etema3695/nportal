@@ -58,7 +58,8 @@ namespace NewsPortal.Identity
 
         public Task<ApplicationUser> FindByNameAsync(string normalizedUserName, CancellationToken ct)
             => Task.FromResult(_db.Set<ApplicationUser>()
-                .FirstOrDefault(u => u.NormalizedUserName == normalizedUserName));
+                .FirstOrDefault(u => u.UserName.ToUpper() == normalizedUserName.ToUpper()
+                                  || (u.NormalizedUserName != null && u.NormalizedUserName == normalizedUserName)));
 
         public Task<string> GetUserIdAsync(ApplicationUser user, CancellationToken ct)
             => Task.FromResult(user.Id);
@@ -100,7 +101,8 @@ namespace NewsPortal.Identity
 
         public Task<ApplicationUser> FindByEmailAsync(string normalizedEmail, CancellationToken ct)
             => Task.FromResult(_db.Set<ApplicationUser>()
-                .FirstOrDefault(u => u.NormalizedEmail == normalizedEmail));
+                .FirstOrDefault(u => u.Email.ToUpper() == normalizedEmail.ToUpper()
+                                  || (u.NormalizedEmail != null && u.NormalizedEmail == normalizedEmail)));
 
         public Task<string> GetNormalizedEmailAsync(ApplicationUser user, CancellationToken ct)
             => Task.FromResult(user.NormalizedEmail);
@@ -114,10 +116,10 @@ namespace NewsPortal.Identity
             var role = _db.Set<IdentityRole>().FirstOrDefault(r => r.NormalizedName == roleName.ToUpperInvariant());
             if (role != null)
             {
-                var existing = _db.Set<IdentityUserRole<string>>()
+                var existing = _db.Set<ApplicationUserRole>()
                     .FirstOrDefault(ur => ur.UserId == user.Id && ur.RoleId == role.Id);
                 if (existing == null)
-                    _db.Set<IdentityUserRole<string>>().Add(new IdentityUserRole<string> { UserId = user.Id, RoleId = role.Id });
+                    _db.Set<ApplicationUserRole>().Add(new ApplicationUserRole { UserId = user.Id, RoleId = role.Id });
             }
             _db.SaveChanges();
             return Task.CompletedTask;
@@ -128,9 +130,9 @@ namespace NewsPortal.Identity
             var role = _db.Set<IdentityRole>().FirstOrDefault(r => r.NormalizedName == roleName.ToUpperInvariant());
             if (role != null)
             {
-                var ur = _db.Set<IdentityUserRole<string>>()
+                var ur = _db.Set<ApplicationUserRole>()
                     .FirstOrDefault(x => x.UserId == user.Id && x.RoleId == role.Id);
-                if (ur != null) _db.Set<IdentityUserRole<string>>().Remove(ur);
+                if (ur != null) _db.Set<ApplicationUserRole>().Remove(ur);
             }
             _db.SaveChanges();
             return Task.CompletedTask;
@@ -138,7 +140,7 @@ namespace NewsPortal.Identity
 
         public Task<IList<string>> GetRolesAsync(ApplicationUser user, CancellationToken ct)
         {
-            var roleIds = _db.Set<IdentityUserRole<string>>()
+            var roleIds = _db.Set<ApplicationUserRole>()
                 .Where(ur => ur.UserId == user.Id).Select(ur => ur.RoleId).ToList();
             IList<string> roles = _db.Set<IdentityRole>()
                 .Where(r => roleIds.Contains(r.Id)).Select(r => r.Name).ToList();
@@ -149,7 +151,7 @@ namespace NewsPortal.Identity
         {
             var role = _db.Set<IdentityRole>().FirstOrDefault(r => r.NormalizedName == roleName.ToUpperInvariant());
             if (role == null) return Task.FromResult(false);
-            var exists = _db.Set<IdentityUserRole<string>>()
+            var exists = _db.Set<ApplicationUserRole>()
                 .Any(ur => ur.UserId == user.Id && ur.RoleId == role.Id);
             return Task.FromResult(exists);
         }
@@ -160,7 +162,7 @@ namespace NewsPortal.Identity
             IList<ApplicationUser> users = new List<ApplicationUser>();
             if (role != null)
             {
-                var userIds = _db.Set<IdentityUserRole<string>>()
+                var userIds = _db.Set<ApplicationUserRole>()
                     .Where(ur => ur.RoleId == role.Id).Select(ur => ur.UserId).ToList();
                 users = _db.Set<ApplicationUser>().Where(u => userIds.Contains(u.Id)).ToList();
             }

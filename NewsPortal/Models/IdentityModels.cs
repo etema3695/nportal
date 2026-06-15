@@ -16,6 +16,11 @@ namespace NewsPortal.Models
     }
 
     /// <summary>
+    /// Concrete non-generic subclass so EF6 can discover it as a DbSet.
+    /// </summary>
+    public class ApplicationUserRole : IdentityUserRole<string> { }
+
+    /// <summary>
     /// EF6 DbContext covering both Identity tables and application tables.
     /// </summary>
     public class ApplicationDbContext : System.Data.Entity.DbContext
@@ -28,18 +33,21 @@ namespace NewsPortal.Models
         // Identity tables (mapped to existing AspNet* schema)
         public DbSet<ApplicationUser> Users { get; set; }
         public DbSet<IdentityRole> Roles { get; set; }
-        public DbSet<IdentityUserRole<string>> UserRoles { get; set; }
+        public DbSet<ApplicationUserRole> UserRoles { get; set; }
 
         // EF6 parameterless constructor — used by migrations and legacy code
         public ApplicationDbContext()
             : base("DefaultConnection")
         {
+            System.Data.Entity.Database.SetInitializer<ApplicationDbContext>(null);
         }
 
         // Constructor accepting a connection string — used by ASP.NET Core DI
         public ApplicationDbContext(string connectionString)
             : base(connectionString)
         {
+            // Disable EF6 database initializer — schema is managed by migrations
+            System.Data.Entity.Database.SetInitializer<ApplicationDbContext>(null);
         }
 
         protected override void OnModelCreating(System.Data.Entity.DbModelBuilder modelBuilder)
@@ -49,10 +57,8 @@ namespace NewsPortal.Models
             // Map Identity types to existing ASP.NET Identity tables
             modelBuilder.Entity<ApplicationUser>().ToTable("AspNetUsers");
             modelBuilder.Entity<IdentityRole>().ToTable("AspNetRoles");
-            modelBuilder.Entity<IdentityUserRole<string>>().ToTable("AspNetUserRoles")
+            modelBuilder.Entity<ApplicationUserRole>().ToTable("AspNetUserRoles")
                 .HasKey(r => new { r.UserId, r.RoleId });
         }
     }
 }
-
-

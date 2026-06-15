@@ -1,0 +1,15 @@
+[
+  {
+	"Name": "Frontend & Backend",
+	"Projects": [
+	  {
+		"Path": "NewsPortal\\NewsPortal.csproj",
+		"Action": "Start"
+	  },
+	  {
+		"Path": "newsportal-ui\\newsportal-ui.esproj",
+		"Action": "Start"
+	  }
+	]
+  }
+]
