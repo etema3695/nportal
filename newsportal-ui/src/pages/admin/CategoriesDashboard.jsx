@@ -10,8 +10,11 @@ export default function CategoriesDashboard() {
 
   useEffect(() => {
     categoriesApi.getAll()
-      .then(setCategories)
-      .catch(() => setError('Failed to load categories.'))
+      .then(data => setCategories(data || []))
+      .catch(err => {
+        if (err?.response?.status === 401 || err?.response?.status === 403) return
+        setError('Failed to load categories.')
+      })
       .finally(() => setLoading(false))
   }, [])
 

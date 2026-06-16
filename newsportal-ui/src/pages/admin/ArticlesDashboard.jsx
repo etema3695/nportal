@@ -12,8 +12,11 @@ export default function ArticlesDashboard() {
 
   useEffect(() => {
     articlesApi.getAll()
-      .then(setArticles)
-      .catch(() => setError('Failed to load articles.'))
+      .then(data => setArticles(data || []))
+      .catch(err => {
+        if (err?.response?.status === 401 || err?.response?.status === 403) return
+        setError('Failed to load articles.')
+      })
       .finally(() => setLoading(false))
   }, [])
 
@@ -60,7 +63,6 @@ export default function ArticlesDashboard() {
       Loading articles…
     </div>
   )
-  if (error) return <p className="form-error" style={{ margin: '2rem' }}>{error}</p>
 
   return (
     <div className="container">
@@ -70,6 +72,7 @@ export default function ArticlesDashboard() {
           + New Article
         </Link>
       </div>
+      {error && <p className="form-error">{error}</p>}
       <div className="table-wrapper">
         <table className="data-table">
           <thead>

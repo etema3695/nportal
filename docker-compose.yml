@@ -1,0 +1,47 @@
+services:
+  sql-server:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    environment:
+      ACCEPT_EULA: Y
+      SA_PASSWORD: "DockerTest123!"
+      MSSQL_PID: Express
+    ports:
+      - "1433:1433"
+    networks:
+      - newsportal-net
+    restart: on-failure
+
+  db-init:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    depends_on:
+      - sql-server
+    networks:
+      - newsportal-net
+    environment:
+      SA_PASSWORD: "DockerTest123!"
+    entrypoint: |
+      /bin/bash -c '
+      apt-get update && apt-get install -y mssql-tools
+      for i in {1..30}; do
+        /opt/mssql-tools/bin/sqlcmd -S sql-server -U sa -P DockerTest123! -Q "SELECT 1" && break || sleep 2
+      done
+      /opt/mssql-tools/bin/sqlcmd -S sql-server -U sa -P DockerTest123! -i /init-db.sql
+      '
+    volumes:
+      - ./init-db.sql:/init-db.sql
+
+  newsportal:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      ConnectionStrings__DefaultConnection: "Server=sql-server,1433;Database=NewsPortal;User Id=sa;Password=DockerTest123!;TrustServerCertificate=True"
+    depends_on:
+      - db-init
+    restart: on-failure
+    networks:
+      - newsportal-net
+
+networks:
+  newsportal-net:
+    driver: bridge

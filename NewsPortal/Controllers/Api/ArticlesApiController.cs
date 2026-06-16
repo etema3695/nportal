@@ -65,6 +65,20 @@ namespace NewsPortal.Controllers.Api
             if (!result.IsSuccessfull)
                 return BadRequest(new { errors = result });
 
+            // Save the uploaded image file to disk
+            if (file != null && file.Length > 0)
+            {
+                string imagesPath = Path.Combine(_env.ContentRootPath, "Images", "images");
+                if (!Directory.Exists(imagesPath))
+                    Directory.CreateDirectory(imagesPath);
+                string safeFileName = Path.GetFileName(file.FileName);
+                string fullPath = Path.Combine(imagesPath, safeFileName);
+                using (var fs = new FileStream(fullPath, FileMode.Create))
+                {
+                    file.CopyTo(fs);
+                }
+            }
+
             return Ok(new { message = "Article created." });
         }
 
@@ -75,7 +89,7 @@ namespace NewsPortal.Controllers.Api
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            string imagesPath = Path.Combine(_env.WebRootPath ?? "wwwroot", "Images", "images");
+            string imagesPath = Path.Combine(_env.ContentRootPath, "Images", "images");
             if (!Directory.Exists(imagesPath))
                 Directory.CreateDirectory(imagesPath);
 

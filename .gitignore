@@ -1,6 +1,9 @@
 # Build outputs
 bin/
 obj/
+*.dll
+*.exe
+*.pdb
 *.user
 *.suo
 *.userosscache
